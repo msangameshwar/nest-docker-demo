@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+    api:
+        image: msangameshwar/nestjs-docker-demo
+        build:
+            dockerfile: Dockerfile
+            context: .
+        depends_on: 
+            - mysql
+        environment: 
+            NODE_ENV: development
+            PORT: 3000
+        ports:
+            - "8080:3000"
+
+    mysql:
+        image: mysql:latest
+        env_file: ./.env
+        ports:
+            - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+        environment: 
+            - DB_HOST=locahost
+            - DB_USER=$MYSQLDB_USER
+            - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+            - DB_NAME=$MYSQLDB_DATABASE
+            - DB_PORT=$MYSQLDB_DOCKER_PORT
+
