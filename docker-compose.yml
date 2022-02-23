@@ -1,27 +1,32 @@
-version: "3.8"
-services:
-    api:
-        image: msangameshwar/nestjs-docker-demo
-        build:
-            dockerfile: Dockerfile
-            context: .
-        depends_on: 
-            - mysql
-        environment: 
-            NODE_ENV: development
-            PORT: 3000
-        ports:
-            - "8080:3000"
+version: '3.8'
 
-    mysql:
-        image: mysql:latest
+services:
+    web:
+        build:
+            context: .
         env_file: ./.env
+        command: npm start
+        volumes: 
+            - .:/nest-docker/
+            - /nest-docker/node_modules
         ports:
             - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+        depends_on: 
+            - mysqldb
         environment: 
-            - DB_HOST=locahost
-            - DB_USER=$MYSQLDB_USER
-            - DB_PASSWORD=$MYSQLDB_ROOT_PASSWORD
-            - DB_NAME=$MYSQLDB_DATABASE
-            - DB_PORT=$MYSQLDB_DOCKER_PORT
-
+            MYSQL_HOST: mysqldb
+            
+    mysqldb:
+          image: mysql
+          env_file: ./.env
+          environment: 
+              MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+              MYSQL_DATABASE: $MYSQL_DATABASE
+          ports:
+              - $MYSQL_LOCAL_PORT:$MYSQL_DOCKER_PORT
+          volumes:
+              - mysql:/var/lib/mysql
+              - mysql_config:/etc/mysql       
+volumes:
+    mysql:
+    mysql_config:

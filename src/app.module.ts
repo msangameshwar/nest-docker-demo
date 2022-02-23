@@ -4,16 +4,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BookModule } from './book/book.module';
 import { Book } from './book/entities/book.entity';
+require('dotenv').config();
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'mysql' as 'mysql',
       host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'crud_demo',
+      port: Number(process.env.MYSQL_DOCKER_PORT),
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_ROOT_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
       entities: [Book],
       synchronize: true,
       dropSchema: false,
